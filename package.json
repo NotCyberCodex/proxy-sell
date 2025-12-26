@@ -1,0 +1,39 @@
+{
+  "name": "xz-proxy-telegram-mini-app",
+  "version": "1.0.0",
+  "description": "Telegram Mini App for selling proxy services with balance deposit system",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "postinstall": "prisma generate"
+  },
+  "keywords": [
+    "telegram",
+    "mini-app",
+    "proxy",
+    "payment",
+    "vercel"
+  ],
+  "author": "XZ Proxy",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.0.0",
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "telegram-webapps": "^1.0.0",
+    "node-fetch": "^2.6.7",
+    "crypto-js": "^4.1.1",
+    "query-string": "^8.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^5.0.0",
+    "prisma": "^5.0.0",
+    "@types/crypto-js": "^4.1.1"
+  }
+}

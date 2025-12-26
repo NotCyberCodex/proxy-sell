@@ -1,0 +1,76 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  telegramId   String   @unique
+  firstName    String
+  lastName     String?
+  username     String?
+  photoUrl     String?
+  balance      Float    @default(0.0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  transactions Transaction[]
+  purchases    ProxyPurchase[]
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // 'deposit', 'purchase'
+  amount      Float
+  description String
+  referenceId String?  // Payment reference ID to prevent duplicates
+  status      String   @default("pending") // 'pending', 'completed', 'failed', 'cancelled'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model ProxyProduct {
+  id          String   @id @default(cuid())
+  name        String   // "ABC (GB) Proxy"
+  description String   // "Non-expiring residential proxies, global coverage"
+  gbOptions   Json     // [1, 2, 5, 10, 15, 20, 25, 30, 50, 100]
+  pricePerGb  Float    // Price per GB
+  stock       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  purchases   ProxyPurchase[]
+}
+
+model ProxyPurchase {
+  id           String   @id @default(cuid())
+  userId       String
+  productId    String
+  gbAmount     Int      // Total GB purchased
+  quantity     Int      // Number of packages
+  totalAmount  Float    // Total cost
+  proxyDetails Json?    // { ip: string, port: number, username: string, password: string }
+  status       String   @default("pending") // 'pending', 'completed', 'failed'
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+  product      ProxyProduct @relation(fields: [productId], references: [id])
+}
+
+model Payment {
+  id           String   @id @default(cuid())
+  referenceId  String   @unique  // Payment reference from RupantorPay
+  userId       String
+  amount       Float
+  status       String   @default("pending") // 'pending', 'completed', 'failed', 'verified'
+  paymentData  Json?    // Raw payment data from RupantorPay
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
